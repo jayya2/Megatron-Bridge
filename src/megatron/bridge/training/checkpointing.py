@@ -644,8 +644,21 @@ def save_checkpoint(
                 )
                 if MultiStorageClientFeature.is_enabled():
                     msc = MultiStorageClientFeature.import_package()
-                    msc.torch.save(train_state_dict, train_state_local_filename)
-                    msc.torch.save(train_state_dict, train_state_global_filename)
+                    # checkpoint management attributes
+                    attribute_dict = [{
+                        "author": "jayya",
+                        "step": train_state.step,
+                        "model_type": cfg.model.__class__.__name__,
+                        "optimizer_type": type(optimizer).__name__ if optimizer else "None",
+                        "scheduler_type": type(opt_param_scheduler).__name__ if opt_param_scheduler else "None",
+                        "timestamp": start_ckpt,
+                        "rank": rank
+                    }]
+                    msc.torch.save(train_state_dict, train_state_local_filename, attributes=attribute_dict)
+                    msc.torch.save(train_state_dict, train_state_global_filename, attributes=attribute_dict)
+                    print("testing ABC")
+                    # msc.torch.save(train_state_dict, train_state_local_filename)
+                    # msc.torch.save(train_state_dict, train_state_global_filename)
                 else:
                     torch.save(train_state_dict, train_state_local_filename)
                     shutil.copy(train_state_local_filename, train_state_global_filename)
