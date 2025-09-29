@@ -22,7 +22,7 @@ model:
   seq_length: 4096
 
 train:
-  train_iters: 20
+  train_iters: 50 # total 50 iterations
   global_batch_size: 8
   micro_batch_size: 1
   eval_iters: 0
@@ -36,7 +36,10 @@ scheduler:
 
 checkpoint:
   # Directory to save to. If null, no checkpoint will be saved.
-  save: null
+  # save: "msc://demo-ckpt-pdx/ckpt-test/llama3_8b_pretrain/checkpoints" # pdx
+  # save: "msc://demo-ckpt-aws/ckpt-test/llama3_8b_pretrain/checkpoints" # aws
+  save: "msc://demo-ckpt-dss/ckpt-test/llama3_8b_pretrain/checkpoints" # dss
+  save_interval: 10  # Save checkpoint every 10 iterations
 
 logger:
   log_interval: 1

@@ -580,8 +580,29 @@ def save_checkpoint(
                 )
                 if MultiStorageClientFeature.is_enabled():
                     msc = MultiStorageClientFeature.import_package()
-                    msc.torch.save(train_state_dict, train_state_local_filename)
-                    msc.torch.save(train_state_dict, train_state_global_filename)
+                    # Checkpoint management attributes
+                    attribute_dict = {
+                        # Core attributes
+                        "step": str(train_state.step),
+                        # Model config
+                        "model_type": cfg.model.__class__.__name__,
+                        "hidden_size": str(cfg.model.hidden_size),
+                        "num_layers": str(cfg.model.num_layers),
+                        # Training progress
+                        "consumed_train_samples": str(train_state.consumed_train_samples),
+                        "consumed_valid_samples": str(train_state.consumed_valid_samples),
+                        "floating_point_operations": str(num_floating_point_operations_so_far),
+                        # Parallelism
+                        "tensor_parallel_size": str(cfg.model.tensor_model_parallel_size),
+                        "pipeline_parallel_size": str(cfg.model.pipeline_model_parallel_size),
+                        # Optimizer
+                        "learning_rate": str(cfg.optimizer.lr),
+                        "optimizer_type": cfg.optimizer.optimizer,
+                        # SLURM Info
+                        "slurm_cluster": os.getenv("SLURM_CLUSTER_NAME", "N/A"),
+                    }
+                    msc.torch.save(train_state_dict, train_state_local_filename, attributes=attribute_dict)
+                    msc.torch.save(train_state_dict, train_state_global_filename, attributes=attribute_dict)
                 else:
                     torch.save(train_state_dict, train_state_local_filename)
                     shutil.copy(train_state_local_filename, train_state_global_filename)

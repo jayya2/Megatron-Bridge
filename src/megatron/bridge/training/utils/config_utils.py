@@ -196,7 +196,13 @@ class _ConfigContainerBase:
             else:
                 if MultiStorageClientFeature.is_enabled():
                     msc = MultiStorageClientFeature.import_package()
-                    with msc.open(yaml_path, "w") as f:
+                    attribute_dict = {
+                        # Core attributes
+                        "step": str(int(os.path.basename(os.path.dirname(yaml_path)).split("_")[-1])),
+                        # SLURM Info
+                        "slurm_cluster": os.getenv("SLURM_CLUSTER_NAME", "N/A"),
+                    }
+                    with msc.open(yaml_path, "w", attributes = attribute_dict) as f:
                         yaml.safe_dump(config_dict, f, default_flow_style=False)
                 else:
                     with open(yaml_path, "w") as f:
