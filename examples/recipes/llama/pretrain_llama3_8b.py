@@ -135,8 +135,8 @@ def main() -> None:
     logger.info("Loaded base configuration")
 
     # Print configuration on rank 0
-    if get_rank_safe() == 0:
-        cfg.print_yaml()
+    #if get_rank_safe() == 0:
+    #    cfg.print_yaml()
 
     # Convert the initial Python dataclass to an OmegaConf DictConfig for merging
     merged_omega_conf, excluded_fields = create_omegaconf_dict_config(cfg)
@@ -166,7 +166,7 @@ def main() -> None:
     # Display final configuration
     if get_rank_safe() == 0:
         logger.info("--- Final Merged Configuration ---")
-        cfg.print_yaml()
+        #cfg.print_yaml()
         logger.info("----------------------------------")
 
     # Start training

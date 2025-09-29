@@ -36,7 +36,7 @@ scheduler:
 
 checkpoint:
   # Directory to save to. If null, no checkpoint will be saved.
-  save: null
+  save: "msc://default/tmp/checkpoints"
 
 dist:
   use_megatron_fsdp: false

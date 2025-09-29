@@ -429,6 +429,7 @@ def save_checkpoint(
                                          before consistency checks in distributed checkpointing.
     """
 
+    print_rank_0("saving checkpoint with my mounted code")
     train_state = state.train_state
     start_ckpt = time()
     cfg = state.cfg
@@ -643,6 +644,7 @@ def save_checkpoint(
                     num_floating_point_operations_so_far, dtype=torch.float32
                 )
                 if MultiStorageClientFeature.is_enabled():
+                    print_rank_0("using MSC to save train state")
                     msc = MultiStorageClientFeature.import_package()
                     # checkpoint management attributes
                     attribute_dict = [{
@@ -654,12 +656,13 @@ def save_checkpoint(
                         "timestamp": start_ckpt,
                         "rank": rank
                     }]
+                    print_rank_0(f"MSC attribute dict: {attribute_dict}")
                     msc.torch.save(train_state_dict, train_state_local_filename, attributes=attribute_dict)
                     msc.torch.save(train_state_dict, train_state_global_filename, attributes=attribute_dict)
-                    print("testing ABC")
                     # msc.torch.save(train_state_dict, train_state_local_filename)
                     # msc.torch.save(train_state_dict, train_state_global_filename)
                 else:
+                    print_rank_0("using original torch to save train state")
                     torch.save(train_state_dict, train_state_local_filename)
                     shutil.copy(train_state_local_filename, train_state_global_filename)
 
