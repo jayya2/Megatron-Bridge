@@ -647,7 +647,7 @@ def save_checkpoint(
                     print_rank_0("using MSC to save train state")
                     msc = MultiStorageClientFeature.import_package()
                     # checkpoint management attributes
-                    attribute_dict = [{
+                    attribute_dict = {
                         "author": "jayya",
                         "step": train_state.step,
                         "model_type": cfg.model.__class__.__name__,
@@ -655,7 +655,7 @@ def save_checkpoint(
                         "scheduler_type": type(opt_param_scheduler).__name__ if opt_param_scheduler else "None",
                         "timestamp": start_ckpt,
                         "rank": rank
-                    }]
+                    }
                     print_rank_0(f"MSC attribute dict: {attribute_dict}")
                     msc.torch.save(train_state_dict, train_state_local_filename, attributes=attribute_dict)
                     msc.torch.save(train_state_dict, train_state_global_filename, attributes=attribute_dict)
